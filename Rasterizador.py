@@ -2,6 +2,7 @@ from numpy import array
 from pygame import init
 from pygame.draw import polygon
 from pygame.display import set_mode, flip
+from math import sqrt
     
 def ptoInterseccion(n, ptoPlano, d, ptoRayo):
     anguloIncidencia = n @ d
@@ -35,9 +36,7 @@ def main():
                                         set_mode((300, 300)), [], 100  # tupla no mutable
 
     distanciasPtos = []
-
-    from math import sqrt
-    
+   
     for pto in ptosInterseccion:
         x,y,z=pto
         #ptosPantalla.append([escala * (x + 1), -escala * (y - 2)])
