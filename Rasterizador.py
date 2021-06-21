@@ -29,14 +29,16 @@ def main():
     
     init()
      
-    NEGRO, BLANCO, AZUL, VERDE, ROJO, pantalla, ptosPantalla, escala = (0, 0, 0), \
+    NEGRO, BLANCO, AZUL, VERDE, ROJO, pantalla, ptosPantalla, escala = (0, 0, 0),\
                                        (255, 255, 255), (0, 0, 255),\
                                        (0, 255, 0), (255, 0, 0),\
                                         set_mode((300, 300)), [], 100  # tupla no mutable
     
     for pto in ptosInterseccion:
         x,y,z=pto
-        ptosPantalla.append([escala * x, escala * y + escala])
+        #ptosPantalla.append([escala * (x + 1), -escala * (y - 2)])
+        ptosPantalla.append([escala * (x + 1), -escala * (y - 2)])
+
 
     print("ptosInterseccion =", ptosInterseccion, ", ptosPantalla =", ptosPantalla)
     
