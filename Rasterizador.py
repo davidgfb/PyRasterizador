@@ -48,9 +48,7 @@ def main():
         dy = y-yR
         dz = z-zR
         
-        l = sqrt(dx ** 2 + dy ** 2 + dz ** 2)
-
-        distanciasPtos.append(l)
+        distanciasPtos.append(sqrt(dx ** 2 + dy ** 2 + dz ** 2))
 
     print("ptosInterseccion =", ptosInterseccion,
           ", \nptosPantalla =", ptosPantalla,
