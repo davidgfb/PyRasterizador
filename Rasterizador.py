@@ -30,12 +30,10 @@ def main():
     
     init()
      
-    NEGRO, BLANCO, AZUL, VERDE, ROJO, pantalla, ptosPantalla, escala = (0, 0, 0),\
+    NEGRO, BLANCO, AZUL, VERDE, ROJO, pantalla, ptosPantalla, escala, distanciasPtos = (0, 0, 0),\
                                        (255, 255, 255), (0, 0, 255),\
                                        (0, 255, 0), (255, 0, 0),\
-                                        set_mode((300, 300)), [], 100  # tupla no mutable
-
-    distanciasPtos = []
+                                        set_mode((300, 300)), [], 100, []  # tupla no mutable
    
     for pto in ptosInterseccion:
         x,y,z=pto
