@@ -33,14 +33,28 @@ def main():
                                        (255, 255, 255), (0, 0, 255),\
                                        (0, 255, 0), (255, 0, 0),\
                                         set_mode((300, 300)), [], 100  # tupla no mutable
+
+    distanciasPtos = []
+
+    from math import sqrt
     
     for pto in ptosInterseccion:
         x,y,z=pto
         #ptosPantalla.append([escala * (x + 1), -escala * (y - 2)])
         ptosPantalla.append([escala * (x + 1), -escala * (y - 2)])
 
+        xR, yR, zR = ptoRayo
+        dx = x-xR
+        dy = y-yR
+        dz = z-zR
+        
+        l = sqrt(dx ** 2 + dy ** 2 + dz ** 2)
 
-    print("ptosInterseccion =", ptosInterseccion, ", ptosPantalla =", ptosPantalla)
+        distanciasPtos.append(l)
+
+    print("ptosInterseccion =", ptosInterseccion,
+          ", \nptosPantalla =", ptosPantalla,
+          ", \ndistanciasPtos =", distanciasPtos)
     
     polygon(pantalla, BLANCO, ptosPantalla, 0)
 
