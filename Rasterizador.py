@@ -2,8 +2,9 @@ from numpy import array, cross
 from numpy.linalg import norm
 from pygame import init
 from pygame.draw import polygon
-from pygame.display import set_mode, flip
+from pygame.display import set_mode, update
 from math import sqrt, sin, acos, degrees
+from time import sleep
     
 def devuelveInterseccionPlanoRayo(n, ptoPlano, d, ptoRayo):
     anguloIncidencia = n @ d # n * d * cos(n^d)
@@ -17,8 +18,6 @@ def devuelveInterseccionPlanoRayo(n, ptoPlano, d, ptoRayo):
 
 def sombreaPlano():
     # sombreador plano cara
-    ptoLuz, dLuz = 10 * y, -y # cenital hacia abajo
-
     moduloN_Tri, moduloD_Luz = nTri / norm(y), dLuz / norm(ptoLuz)
 
     pEscalar = moduloN_Tri @ moduloD_Luz
@@ -27,10 +26,13 @@ def sombreaPlano():
 
     pColor = sin(anguloIncidenciaLuz)
 
+    if pColor < 0:
+        pColor = 0
+
     colorTri = BLANCO * pColor # gris
 
-    print(40 * "-",
-          "\nnTri =",                  nTri,
+    print(40 * "#",
+          "\n\nnTri =",                  nTri,
           ", \nptoRayo =",             ptoRayo,
           ", \nptoPlano =",            ptoPlano,
           "\n", 40 * "-",
@@ -44,13 +46,16 @@ def sombreaPlano():
           ", \npEscalar =",            pEscalar,
           ", \nanguloIncidenciaLuz =", anguloIncidenciaLuz,
           ", \npColor =",              pColor,
-          ", \ncolorTri =",            colorTri)
+          ", \ncolorTri =",            colorTri,
+          "\n")
    
     polygon(pantalla, colorTri, ptosPantalla, noTieneRelleno)
     
 #def main():
 x, y, z, ptosInterseccion, dFocal = array((1,0,0)), array((0,1,0)),\
                                     array((0,0,1)), [], 1 #1u = 1m (1000mm), 0.1 #1dm (10cm, 100mm), 0.05 #5cm (50 mm)
+
+ptoLuz, dLuz = 10 * y, -y # cenital hacia abajo
 ptosTri = (x, y, z)    
 n, ptoRayo = z, 3/2 * z 
 
@@ -83,14 +88,14 @@ for ptoInterseccion in ptosInterseccion: #ptoPantalla != ptoInterseccion
 
 noTieneRelleno = 0 # < 0 nada, = 0 relleno, > 0 wireframe
 
+for x in range(20):
+    pantalla.fill(NEGRO)
 
-sombreaPlano()
-
-
-# UPDATE
-#pantalla.fill(NEGRO)
-
-flip()
+    ptoLuz += array((1, 0, 0))
+    
+    sombreaPlano()
+    update()
+    sleep(1)
 
 #main()
 
