@@ -3,7 +3,7 @@ from numpy.linalg import norm
 from pygame import init
 from pygame.draw import polygon
 from pygame.display import set_mode, flip
-from math import sqrt
+from math import sqrt, sin, acos, degrees
     
 def devuelveInterseccionPlanoRayo(n, ptoPlano, d, ptoRayo):
     anguloIncidencia = n @ d # n * d * cos(n^d)
@@ -17,7 +17,7 @@ def devuelveInterseccionPlanoRayo(n, ptoPlano, d, ptoRayo):
 
 def main():
     x, y, z, ptosInterseccion, dFocal = array((1,0,0)), array((0,1,0)),\
-                                        array((0,0,1)), [], 1 #1m (1000mm), 0.1 #1dm (10cm, 100mm), 0.05 #5cm (50 mm)
+                                        array((0,0,1)), [], 1 #1u = 1m (1000mm), 0.1 #1dm (10cm, 100mm), 0.05 #5cm (50 mm)
     ptosTri = (x, y, z)    
     n, ptoRayo = z, 3/2 * z 
 
@@ -30,21 +30,23 @@ def main():
     for ptoTri in ptosTri:        
         d = ptoTri - ptoRayo
 
-        x, y, z = devuelveInterseccionPlanoRayo(n, ptoPlano, d, ptoRayo) # conversion a enteros
-        ptosInterseccion.append((x,y,z)) # conversion a array de enteros
+        xI, yI, zI = devuelveInterseccionPlanoRayo(n, ptoPlano, d, ptoRayo) # conversion a enteros
+        ptosInterseccion.append((xI,yI,zI)) # conversion a array de enteros
             
     init()
      
     NEGRO, BLANCO, AZUL, VERDE, ROJO, pantalla, ptosPantalla, escala, \
-           distanciasPtos = (0, 0, 0), (255, 255, 255), (0, 0, 255),\
+           distanciasPtos = (0, 0, 0), array((255, 255, 255)), (0, 0, 255),\
                             (0, 255, 0), (255, 0, 0),\
                             set_mode((300, 300)), [], 100, []  # tupla no mutable
    
     for ptoInterseccion in ptosInterseccion: #ptoPantalla != ptoInterseccion
-        x, y, z = ptoInterseccion
-        ptosPantalla.append((escala * (x + 1), -escala * (y - 2)))
+        xI, yI, zI = ptoInterseccion
+        ptosPantalla.append((escala * (xI + 1), -escala * (yI - 2)))
         
         distanciasPtos.append(norm(ptoInterseccion - ptoRayo))
+
+        # aqui para sombreador plano vertices (arista?) 
 
     print("nTri =",                 nTri,
           ", \nptoRayo =",          ptoRayo,
@@ -53,9 +55,25 @@ def main():
           ", \nptosPantalla =",     ptosPantalla,
           ", \ndistanciasPtos =",   distanciasPtos)
 
-    sinRelleno = 0 # < 0 nada, 0 relleno, > 0 wireframe 
-    
-    polygon(pantalla, BLANCO, ptosPantalla, sinRelleno) 
+    noTieneRelleno = 0 # < 0 nada, 0 relleno, > 0 wireframe
+
+    ptoLuz, dLuz = 10 * y, -y # cenital hacia abajo
+
+
+    # sombreador plano cara
+    moduloN_Tri, moduloD_Luz = nTri / norm(y), dLuz / norm(ptoLuz)
+
+    pEscalar = moduloN_Tri @ moduloD_Luz
+
+    anguloIncidenciaLuz = degrees(acos(pEscalar))
+
+    pColor = sin(anguloIncidenciaLuz)
+
+    colorTri = BLANCO * pColor # gris
+
+    print(moduloN_Tri, moduloD_Luz, pEscalar, anguloIncidenciaLuz, pColor, colorTri)
+   
+    polygon(pantalla, colorTri, ptosPantalla, noTieneRelleno) 
 
     flip()
 
