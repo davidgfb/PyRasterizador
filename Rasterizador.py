@@ -1,57 +1,61 @@
-from numpy import array
+from numpy import array, cross
+from numpy.linalg import norm
 from pygame import init
 from pygame.draw import polygon
 from pygame.display import set_mode, flip
 from math import sqrt
     
-def ptoInterseccion(n, ptoPlano, d, ptoRayo):
-    anguloIncidencia = n @ d
+def devuelveInterseccionPlanoRayo(n, ptoPlano, d, ptoRayo):
+    anguloIncidencia = n @ d # n * d * cos(n^d)
 
     if abs(anguloIncidencia) < 1e-6:
         raise RuntimeError("error: el rayo es paralelo al plano")
 
-    direccionPlanoRayo = ptoRayo - ptoPlano
+    dPlanoRayo = ptoRayo - ptoPlano
     
-    return -n @ direccionPlanoRayo / anguloIncidencia * d + ptoPlano + direccionPlanoRayo
+    return -n @ dPlanoRayo / anguloIncidencia * d + ptoPlano + dPlanoRayo
 
 def main():
-    ptosTri, z, ptosInterseccion = [[0,1,0],
-                                      [1,0,0],
-                                      [0,0,1]],\
-                                     array([0, 0, 1]), [] 
-    
-    n, ptoPlano, ptoRayo,  = z, -5 * z, 10 * z
+    x, y, z, ptosInterseccion, dFocal = array((1,0,0)), array((0,1,0)),\
+                                        array((0,0,1)), [], 1 #1m (1000mm), 0.1 #1dm (10cm, 100mm), 0.05 #5cm (50 mm)
+    ptosTri = (x, y, z)    
+    n, ptoRayo = z, 3/2 * z 
 
-    for ptoTri in ptosTri:
-        rayDirection = ptoTri - ptoRayo
-        x,y,z = ptoInterseccion(n, ptoPlano, rayDirection, ptoRayo) # conversion a enteros
+    ptoPlano = ptoRayo - array((0, 0, dFocal))
 
-        ptosInterseccion.append([x,y,z]) # conversion a array de enteros
-    
+    # saca la normal del plano del triangulo a partir de dos vectores entre puntos
+    dTri_12, dTri_23 = x - y, z - x
+    nTri = abs(cross(dTri_12, dTri_23))   
+
+    for ptoTri in ptosTri:        
+        d = ptoTri - ptoRayo
+
+        x, y, z = devuelveInterseccionPlanoRayo(n, ptoPlano, d, ptoRayo) # conversion a enteros
+        ptosInterseccion.append((x,y,z)) # conversion a array de enteros
+            
     init()
      
-    NEGRO, BLANCO, AZUL, VERDE, ROJO, pantalla, ptosPantalla, escala, distanciasPtos = (0, 0, 0),\
-                                       (255, 255, 255), (0, 0, 255),\
-                                       (0, 255, 0), (255, 0, 0),\
-                                        set_mode((300, 300)), [], 100, []  # tupla no mutable
+    NEGRO, BLANCO, AZUL, VERDE, ROJO, pantalla, ptosPantalla, escala, \
+           distanciasPtos = (0, 0, 0), (255, 255, 255), (0, 0, 255),\
+                            (0, 255, 0), (255, 0, 0),\
+                            set_mode((300, 300)), [], 100, []  # tupla no mutable
    
-    for pto in ptosInterseccion:
-        x,y,z=pto
-        #ptosPantalla.append([escala * (x + 1), -escala * (y - 2)])
-        ptosPantalla.append([escala * (x + 1), -escala * (y - 2)])
-
-        xR, yR, zR = ptoRayo
-        dx = x-xR
-        dy = y-yR
-        dz = z-zR
+    for ptoInterseccion in ptosInterseccion: #ptoPantalla != ptoInterseccion
+        x, y, z = ptoInterseccion
+        ptosPantalla.append((escala * (x + 1), -escala * (y - 2)))
         
-        distanciasPtos.append(sqrt(dx ** 2 + dy ** 2 + dz ** 2))
+        distanciasPtos.append(norm(ptoInterseccion - ptoRayo))
 
-    print("ptosInterseccion =", ptosInterseccion,
-          ", \nptosPantalla =", ptosPantalla,
-          ", \ndistanciasPtos =", distanciasPtos)
+    print("nTri =",                 nTri,
+          ", \nptoRayo =",          ptoRayo,
+          ", \nptoPlano =",         ptoPlano,
+          ", \nptosInterseccion =", ptosInterseccion,
+          ", \nptosPantalla =",     ptosPantalla,
+          ", \ndistanciasPtos =",   distanciasPtos)
+
+    sinRelleno = 0 # < 0 nada, 0 relleno, > 0 wireframe 
     
-    polygon(pantalla, BLANCO, ptosPantalla, 0)
+    polygon(pantalla, BLANCO, ptosPantalla, sinRelleno) 
 
     flip()
 
