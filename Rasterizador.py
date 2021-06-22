@@ -48,14 +48,7 @@ def main():
 
         # aqui para sombreador plano vertices (arista?) 
 
-    print("nTri =",                 nTri,
-          ", \nptoRayo =",          ptoRayo,
-          ", \nptoPlano =",         ptoPlano,
-          ", \nptosInterseccion =", ptosInterseccion,
-          ", \nptosPantalla =",     ptosPantalla,
-          ", \ndistanciasPtos =",   distanciasPtos)
-
-    noTieneRelleno = 0 # < 0 nada, 0 relleno, > 0 wireframe
+    noTieneRelleno = 0 # < 0 nada, = 0 relleno, > 0 wireframe
 
     ptoLuz, dLuz = 10 * y, -y # cenital hacia abajo
 
@@ -71,7 +64,22 @@ def main():
 
     colorTri = BLANCO * pColor # gris
 
-    print(moduloN_Tri, moduloD_Luz, pEscalar, anguloIncidenciaLuz, pColor, colorTri)
+    print(40 * "-",
+          "\nnTri =",                  nTri,
+          ", \nptoRayo =",             ptoRayo,
+          ", \nptoPlano =",            ptoPlano,
+          "\n", 40 * "-",
+          "\nptosInterseccion =",      ptosInterseccion,
+          "\n", 40 * "-",
+          "\nptosPantalla =",          ptosPantalla,
+          "\n", 40 * "-",
+          "\ndistanciasPtos =",        distanciasPtos,
+          "\nmoduloN_Tri =",           moduloN_Tri,
+          ", \nmoduloD_Luz =",         moduloD_Luz,
+          ", \npEscalar =",            pEscalar,
+          ", \nanguloIncidenciaLuz =", anguloIncidenciaLuz,
+          ", \npColor =",              pColor,
+          ", \ncolorTri =",            colorTri)
    
     polygon(pantalla, colorTri, ptosPantalla, noTieneRelleno) 
 
