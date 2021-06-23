@@ -7,17 +7,29 @@ from time           import sleep
 from math           import sin, cos, radians
 from time           import time
 
-seMueveLuz = False # True
+seMueveLuz = False #True
 estaDepurado = False
 
-CERO, X, Y, Z, UNITARIO, dFocal = array((0, 0, 0)), array((1, 0, 0)),\
-                                  array((0.0, 1.0, 0.0)),\
-                                  array((0, 0, 1)), array((1, 1, 1)), 1 # 1u = 1m (1000mm), 0.1 #1dm (10cm, 100mm), 0.05 #5cm (50 mm)
+CERO, Z, Y, X, UNITARIO, dFocal = array((0, 0, 0)), array((0, 0, 1)),\
+                                  array((0, 1, 0)), array((1, 0, 0)),\
+                                  array((1, 1, 1)), 1
 
 NEGRO, ROJO, VERDE, AZUL, BLANCO, PANTALLA, escala =\
        CERO, 255 * X, 255 * Y, 255 * Z, 255 * UNITARIO, set_mode((300, 300)), 100
-       
-def devuelveInterseccionPlanoRayo(n, ptoPlano, d, ptoRayo):
+
+ptosInterseccion, distanciasPtos, ptosPantalla = [], [], [] 
+
+ptoLuz, dLuz = 10 * Y, -Y # cenital hacia abajo
+ptosTri = (X, Y, Z)    
+n, ptoRayo = Z, 3/2 * Z 
+ptoPlano = ptoRayo - array((0, 0, dFocal))
+
+# saca la normal del plano del triangulo a partir de dos vectores entre puntos
+dTri_12, dTri_23 = X - Y, Z - X
+nTri = cross(dTri_12, dTri_23) # regla mano derecha # abs
+  
+def devuelveInterseccionPlanoRayo(n, d, ptoPlano, ptoRayo):
+    '''n y d deben estar normalizados'''
     pEscalarN_Y_D = n @ d 
     
     if abs(pEscalarN_Y_D) < 1e-6:
@@ -95,28 +107,14 @@ def sombreaPlano(): # sombreador cara # la posicion por si sola no afecta a la l
         
     polygon(PANTALLA, colorTriAtenuado, ptosPantalla, noTieneRelleno)
 
-# main    
-
-ptosInterseccion, distanciasPtos, ptosPantalla = [], [], [] # ptosInterseccion = distanciasPtos = []
-
-ptoLuz, dLuz = 10 * Y, -Y # cenital hacia abajo
-ptosTri = (X, Y, Z)    
-n, ptoRayo = Z, 3/2 * Z 
-ptoPlano = ptoRayo - array((0, 0, dFocal))
-
-# saca la normal del plano del triangulo a partir de dos vectores entre puntos
-dTri_12, dTri_23 = X - Y, Z - X
-nTri = cross(dTri_12, dTri_23) # regla mano derecha # abs
-
-for ptoTri in ptosTri:        
+# main
+for ptoTri in ptosTri:    #ptos o ptosEscena    
     d = normaliza(ptoTri, ptoRayo)  
-    xI, yI, zI = devuelveInterseccionPlanoRayo(n, ptoPlano, d, ptoRayo) # conversion a enteros
+    xI, yI, zI = devuelveInterseccionPlanoRayo(n, d, ptoPlano, ptoRayo) # conversion a enteros
 
     distanciasPtos.append(norm(ptoTri - ptoRayo)) # ptoInterseccion - ptoRayo)) # zdepth desde pRayo o desde pInterseccion?
     ptosInterseccion.append((xI, yI, zI)) # conversion a array de enteros
         
-init()
- 
 for ptoInterseccion in ptosInterseccion: 
     xI, yI, zI = ptoInterseccion
     ptosPantalla.append((escala * (xI + 1), -escala * (yI - 2)))
@@ -128,11 +126,13 @@ noTieneRelleno = 0 # < 0 nada, = 0 relleno, > 0 wireframe
 t = time()
 fps = 60
 
+init()
+
 nFotogramas = 200
 for nFotograma in range(nFotogramas):
     PANTALLA.fill(NEGRO)
 
-    ptoLuz += array((0.1, 0, 0))
+    #ptoLuz += array((0.1, 0, 0)) # para mover la camara en sentido positivo del eje X
 
     sombreaPlano()
     update()
