@@ -1,7 +1,7 @@
 from numpy          import array, cross
 from numpy.linalg   import norm
 from pygame         import init
-from pygame.draw    import polygon, line
+from pygame.draw    import polygon, aaline
 from pygame.display import set_mode, update
 from time           import sleep
 from math           import sin, cos, radians
@@ -40,7 +40,7 @@ def sombreaPlano(): # sombreador cara # la posicion unicamente no afecta a la lu
 
     dxLuz, dyLuz, dzLuz = dLuz
     xLinea = 150
-    line(pantalla, BLANCO, (xLinea, 0), (xLinea * (dxLuz + 1), -xLinea * dyLuz), 1) 
+    aaline(pantalla, BLANCO, (xLinea, 0), (xLinea * (dxLuz + 1), -xLinea * dyLuz), 1) 
 
     pEscalarN_Tri_Y_D_Luz = cosAnguloEntreVectores(nTri, dLuz) # pEscalarN_Tri_Y_D_Luz = abs(nTri @ dLuz / norm(nTri - dLuz)) # y = 1er ptoTri # -1 < pEscalarN_Tri_Y_D_Luz < 1 # cos 180º = -1 # backface culling
     # si positivo no esta mirando a camara (no render). si negativo esta mirando (render)
@@ -51,7 +51,7 @@ def sombreaPlano(): # sombreador cara # la posicion unicamente no afecta a la lu
     elif pEscalarN_Tri_Y_D_Luz > 1:
         pEscalarN_Tri_Y_D_Luz = 1
 
-    cTri = BLANCO
+    cTri = VERDE
     colorTriAtenuado = cTri * pEscalarN_Tri_Y_D_Luz # gris
 
     print(40 * "#",
