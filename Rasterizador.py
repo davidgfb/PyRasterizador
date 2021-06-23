@@ -13,8 +13,8 @@ seMueveLuz, estaDepurado, CERO, Z, Y, X, UNITARIO, dFocal = True, False,\
                                   array((1, 1, 1)), 1
 
 NEGRO, ROJO, VERDE, AZUL, BLANCO, PANTALLA, escala, ptosInterseccion,\
-       distanciasPtos, ptosPantalla, ptoLuz, dLuz, ptosTri, n, ptoRayo, dTri_12,\
-       dTri_23, noTieneRelleno, t, fps, nFotogramas =\
+distanciasPtos, ptosPantalla, ptoLuz, dLuz, ptosTri, n, ptoRayo, dTri_12,\
+dTri_23, noTieneRelleno, t, fps, nFotogramas =\
        CERO, 255 * X, 255 * Y, 255 * Z, 255 * UNITARIO, set_mode((300, 300)),\
        100, [], [], [], 10 * Y, -Y, (X, Y, Z), Z, 3/2 * Z, X - Y, Z - X,\
        0, time(), 60, 200
@@ -23,7 +23,7 @@ NEGRO, ROJO, VERDE, AZUL, BLANCO, PANTALLA, escala, ptosInterseccion,\
 ptoPlano = ptoRayo - array((0, 0, dFocal))
 
 # saca la normal del plano del triangulo a partir de dos vectores entre puntos
-nTri = cross(dTri_12, dTri_23) # regla mano derecha # abs
+nTri = cross(dTri_12, dTri_23) # regla mano derecha # abs # *= -1 para cambio sentido
 # negativo nada, 0 relleno, positivo wireframe
   
 def devuelveInterseccionPlanoRayo(n, d, ptoPlano, ptoRayo):
@@ -79,7 +79,7 @@ def sombreaPlano(): # sombreador cara # la posicion por si sola no afecta a la l
     elif pEscalarN_Tri_Y_D_Luz > 1:
         pEscalarN_Tri_Y_D_Luz = 1
 
-    cTri = VERDE
+    cTri = ROJO
     colorTriAtenuado = cTri * pEscalarN_Tri_Y_D_Luz # gris
 
     if estaDepurado: # reduce grav rendimiento
