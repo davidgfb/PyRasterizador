@@ -3,21 +3,22 @@ from numpy.linalg   import norm
 from pygame         import init
 from pygame.draw    import polygon, aaline, circle
 from pygame.display import set_mode, update
-from time           import sleep
+from time           import sleep, time
 from math           import sin, cos, radians
-from time           import time
 
-seMueveLuz, estaDepurado, CERO, Z, Y, X, UNITARIO, dFocal = True, False,\
+seMueveLuz, esDepurado, CERO, Z, Y, X, UNITARIO, dFocal = True, False,\
                                   array((0, 0, 0)), array((0, 0, 1)),\
                                   array((0, 1, 0)), array((1, 0, 0)),\
                                   array((1, 1, 1)), 1
 
 NEGRO, ROJO, VERDE, AZUL, BLANCO, PANTALLA, escala, ptosInterseccion,\
 distanciasPtos, ptosPantalla, ptoLuz, dLuz, ptosTri, n, ptoRayo, dTri_12,\
-dTri_23, noTieneRelleno, t, fps, nFotogramas =\
+dTri_23, noTieneRelleno, fps =\
        CERO, 255 * X, 255 * Y, 255 * Z, 255 * UNITARIO, set_mode((300, 300)),\
        100, [], [], [], 10 * Y, -Y, (X, Y, Z), Z, 3/2 * Z, X - Y, Z - X,\
-       0, time(), 60, 200
+       0, 60 # nFotogramas = 200
+
+# t = time()
 
 # cenital hacia abajo
 ptoPlano = ptoRayo - array((0, 0, dFocal))
@@ -49,10 +50,19 @@ def devuelveD_Sol():
 
     anguloR = radians(anguloG)
 
-    d = (-cos(anguloR), -sin(anguloR), 0)
-
-    if anguloG < 180:
+    if anguloG < 180: # [0, 180)
+        d = (-cos(anguloR), -sin(anguloR), 0)
         anguloG += 1
+
+    elif 180 <= anguloG < 359: # [180, 359)
+        d = X
+        anguloG += 1
+
+    else: # anguloG >= 359 [359, inf)
+        d = X
+        anguloG = 0
+
+    #print("d =", d, ", anguloG =", anguloG)
 
     return d
 
@@ -82,7 +92,7 @@ def sombreaPlano(): # sombreador cara # la posicion por si sola no afecta a la l
     cTri = ROJO
     colorTriAtenuado = cTri * pEscalarN_Tri_Y_D_Luz # gris
 
-    if estaDepurado: # reduce grav rendimiento
+    if esDepurado: # reduce grav rendimiento
         print(40 * "#",
               "\n\nTri {nTri =", nTri, ", ptosTri =", ptosTri,
               
@@ -119,7 +129,8 @@ def sombreaPlano(): # sombreador cara # la posicion por si sola no afecta a la l
 
 init()
 
-for nFotograma in range(nFotogramas):
+#for nFotograma in range(nFotogramas):
+while True:
     for ptoTri in ptosTri: # ptos o ptosEscena    
         d = normaliza(ptoTri, ptoRayo)  
         xI, yI, zI = devuelveInterseccionPlanoRayo(n, d, ptoPlano, ptoRayo) # conversion a enteros
@@ -133,7 +144,7 @@ for nFotograma in range(nFotogramas):
         
     # aqui para sombreador vertices / aristas?
 
-    #ptoLuz += array((0.1, 0, 0)) # para mover la camara en sentido positivo del eje X
+    # ptoLuz += array((0.1, 0, 0)) # para mover la camara en sentido positivo del eje X
 
     sombreaPlano()
 
@@ -141,8 +152,14 @@ for nFotograma in range(nFotogramas):
 
     if fps != 0:
         sleep(1 / fps) 
-  
-dt = time() - t
-print("\nhan pasado", round(dt, 2), "segundos para", nFotogramas, "fotogramas\n",\
-      round(nFotogramas / dt, 2), "fotogramas por segundo") #round(dt / nFotogramas, 2), "segundos por fotograma")
 
+    ''' muy exigente rend
+    t1 = time()
+    dt = t1 - t
+
+    print("\nhan pasado", round(dt, 2), "segundos\n",
+          round(1 / dt, 2), "fotogramas por segundo") # para", nFotogramas, "fotogramas\n",\
+          #round(nFotogramas / dt, 2), "fotogramas por segundo") #round(dt / nFotogramas, 2), "segundos por fotograma")
+
+    t = t1
+    '''
