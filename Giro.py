@@ -2,12 +2,18 @@ from pygame         import init
 from pygame.display import set_mode, update
 from pygame.draw    import aaline
 from numpy          import array
-from math           import sin, cos, radians
+from numpy.linalg   import norm
+from math           import sin, cos, radians, acos, degrees 
 from time           import sleep
 
+CERO = array((0, 0, 0))
 PANTALLA, NEGRO, BLANCO, xOrigenLinea, nFotogramas, sentido, refresca,\
-          anguloG = set_mode((300, 300)), array((0, 0, 0)),\
+          anguloG = set_mode((300, 300)), CERO,\
           255 * array((1, 1, 1)), 150, 400, 0, True, 0 #False # 0 antihorario, 1 horario
+
+Z, Y, X = (0, 0, 1), (0, 1, 0), array((1, 0, 0))
+ptosTri = (X, Y, Z) # el tri tendra un solo angulo local para todos sus puntos
+# tri.gira() tri.angulo # orientacion, rotacion
 
 '''
 def giraPlano(nombrePlano): # en un solo eje o plano (z = 0)
@@ -34,7 +40,7 @@ def giraEje(nombreEje):
 ''' 
 
 def gira(): # en un solo eje o plano (z = 0)
-    '''devuelve d normalizada'''
+    '''devuelve direccion normalizada a partir de angulo'''
     global anguloG
 
     anguloR = radians(anguloG)
@@ -55,7 +61,29 @@ def gira(): # en un solo eje o plano (z = 0)
 
 init()
 
+def devuelveAnguloEntreVectores(u, v):
+    '''devuelve angulo entre vectores normalizados (en un mismo plano o eje)'''
+    sonIgualesU_V = (u == v).all()
+
+    if sonIgualesU_V:
+        angulo = 0
+
+    else: # u != v 
+        angulo = degrees(acos(u @ v / norm(u - v)))
+    
+    return angulo 
+
+''' PROBADOR
+print(devuelveAnguloEntreVectores(X, X), "debe ser 0º\n",
+      devuelveAnguloEntreVectores(Y, X), "debe ser 90º\n",
+      devuelveAnguloEntreVectores(Z, X), "debe ser 90º")
+'''
+
 while True: # for nFotograma in range(nFotogramas):
+    #for ptoTri in ptosTri: # x,y,z
+        
+
+    
     d = gira()
     dx, dy, dz = d
 
