@@ -12,7 +12,7 @@ PANTALLA, NEGRO, BLANCO, xOrigenLinea, nFotogramas, sentido, refresca,\
           255 * array((1, 1, 1)), 150, 400, 0, True, 0 #False # 0 antihorario, 1 horario
 
 Z, Y, X = array((0, 0, 1)), array((0, 1, 0)), array((1, 0, 0))
-ptosTri = (X, Y, Z) # el tri tendra un solo angulo local para todos sus puntos
+ptosTri = [X, Y, Z] # el tri tendra un solo angulo local para todos sus puntos
 # tri.gira() tri.angulo # orientacion, rotacion
 
 '''
@@ -39,10 +39,8 @@ def giraEje(nombreEje):
     return pto
 ''' 
 
-def gira(): # en un solo eje o plano (z = 0)
-    '''devuelve direccion normalizada a partir de angulo'''
-    global anguloG
-
+def gira(anguloG): # en un solo eje o plano (z = 0)
+    '''devuelve direccion normalizada correspondiente al angulo entre [0, 360)'''
     anguloR = radians(anguloG)
 
     if sentido == 0:
@@ -51,14 +49,18 @@ def gira(): # en un solo eje o plano (z = 0)
     elif sentido == 1:
         d = (cos(anguloR), sin(anguloR), 0) # sentido horario
 
+    '''
     if anguloG < 359: # [0,359)
         anguloG += 1
 
     else: # anguloG >= 359 [359, inf)
         anguloG = 0
+    '''
 
     return d
 
+#def gira1():
+    
 init()
 
 def devuelveAnguloEntreVectores(u, v):
@@ -73,6 +75,8 @@ def devuelveAnguloEntreVectores(u, v):
     
     return angulo 
 
+
+
 ''' PROBADOR
 print(devuelveAnguloEntreVectores(X, X), "debe ser 0º\n",
       devuelveAnguloEntreVectores(Y, X), "debe ser 90º\n",
@@ -83,12 +87,37 @@ print(devuelveAnguloEntreVectores(-X, X), "debe ser 180º\n",
       devuelveAnguloEntreVectores(-Z, Z), "debe ser 180º") # error
 '''
 
-while True: # for nFotograma in range(nFotogramas):
-    #for ptoTri in ptosTri: # x,y,z
-        
+'''
+def gira1(d): # rota. vector de rotacion
+    #devuelve direccion girada a partir de d normalizada
+    return cos(radians(1)) / d # en q plano o eje?
 
+#PROBADOR
+print(gira1(X), "debe ser ")
+'''
+
+while True:
+    #'''
+    angulosPtosTri = []
     
-    d = gira()
+    for posPtoArray in range(len(ptosTri)):     
+        anguloPtoTri = devuelveAnguloEntreVectores(ptosTri[posPtoArray], X)
+        anguloPtoTri1 = anguloPtoTri + 1 # - 1
+        angulosPtosTri.append(anguloPtoTri1) 
+        ptosTri[posPtoArray] = gira(radians(anguloPtoTri1)) 
+        
+    print("\nangulosPtosTri =", angulosPtosTri, "\nptosTri =", ptosTri)    
+    #'''
+    
+    #reloj
+    d = gira(anguloG)
+
+    if anguloG < 359: # [0,359)
+        anguloG += 1
+
+    else: # anguloG >= 359 [359, inf)
+        anguloG = 0
+    
     dx, dy, dz = d
 
     pto = xOrigenLinea * array(((dx + 1), (dy + 1)))
