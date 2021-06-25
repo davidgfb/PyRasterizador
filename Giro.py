@@ -11,7 +11,7 @@ PANTALLA, NEGRO, BLANCO, xOrigenLinea, nFotogramas, sentido, refresca,\
           anguloG = set_mode((300, 300)), CERO,\
           255 * array((1, 1, 1)), 150, 400, 0, True, 0 #False # 0 antihorario, 1 horario
 
-Z, Y, X = (0, 0, 1), (0, 1, 0), array((1, 0, 0))
+Z, Y, X = array((0, 0, 1)), array((0, 1, 0)), array((1, 0, 0))
 ptosTri = (X, Y, Z) # el tri tendra un solo angulo local para todos sus puntos
 # tri.gira() tri.angulo # orientacion, rotacion
 
@@ -77,6 +77,10 @@ def devuelveAnguloEntreVectores(u, v):
 print(devuelveAnguloEntreVectores(X, X), "debe ser 0º\n",
       devuelveAnguloEntreVectores(Y, X), "debe ser 90º\n",
       devuelveAnguloEntreVectores(Z, X), "debe ser 90º")
+
+print(devuelveAnguloEntreVectores(-X, X), "debe ser 180º\n",
+      devuelveAnguloEntreVectores(-Y, Y), "debe ser 180º\n",
+      devuelveAnguloEntreVectores(-Z, Z), "debe ser 180º") # error
 '''
 
 while True: # for nFotograma in range(nFotogramas):
