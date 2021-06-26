@@ -49,14 +49,6 @@ def gira(anguloG): # en un solo eje o plano (z = 0)
     elif sentido == 1:
         d = (cos(anguloR), sin(anguloR), 0) # sentido horario
 
-    '''
-    if anguloG < 359: # [0,359)
-        anguloG += 1
-
-    else: # anguloG >= 359 [359, inf)
-        anguloG = 0
-    '''
-
     return d
 
 #def gira1():
@@ -96,18 +88,24 @@ def gira1(d): # rota. vector de rotacion
 print(gira1(X), "debe ser ")
 '''
 
+angulosPtosTri = []
+
+for ptoTri in ptosTri:
+    anguloPtoTri = devuelveAnguloEntreVectores(ptoTri, X)
+    angulosPtosTri.append(anguloPtoTri) 
+
 while True:
-    #'''
-    angulosPtosTri = []
-    
-    for posPtoArray in range(len(ptosTri)):     
-        anguloPtoTri = devuelveAnguloEntreVectores(ptosTri[posPtoArray], X)
-        anguloPtoTri1 = anguloPtoTri + 1 # - 1
-        angulosPtosTri.append(anguloPtoTri1) 
-        ptosTri[posPtoArray] = gira(radians(anguloPtoTri1)) 
+    for posPtoArray in range(len(ptosTri)):
+
+        if angulosPtosTri[posPtoArray] < 359:
+            angulosPtosTri[posPtoArray] += 1
+
+        else: #angulosPtosTri[posPtoArray] >= 359
+            angulosPtosTri[posPtoArray] = 0
+
+        ptosTri[posPtoArray] = gira(radians(angulosPtosTri[posPtoArray])) 
         
     print("\nangulosPtosTri =", angulosPtosTri, "\nptosTri =", ptosTri)    
-    #'''
     
     #reloj
     d = gira(anguloG)
